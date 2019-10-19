@@ -72,18 +72,15 @@ void ProductionManager::manageBuildOrderQueue()
         // if we can make the current item
         if (producer && canMake)
         {
-            // create it and remove it from the _queue
-            create(producer, currentItem);
+            create(producer, currentItem); // create it and remove it from the _queue
             m_queue.removeCurrentHighestPriorityItem();
 
-            // don't actually loop around in here
-            break;
+            break; // don't actually loop around in here
         }
         // otherwise, if we can skip the current item
         else if (m_queue.canSkipItem())
         {
-            // skip it
-            m_queue.skipItem();
+            m_queue.skipItem(); // skip it
 
             // and get the next one
             currentItem = m_queue.getNextHighestPriorityItem();
@@ -154,20 +151,14 @@ const sc2::Unit * ProductionManager::getClosestUnitToPosition(const std::vector<
 // this function will check to see if all preconditions are met and then create a unit
 void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item)
 {
-    if (!producer)
-    {
-        return;
-    }
+    if (!producer) { return; }
 
-    // if we're dealing with a building
-    // TODO: deal with morphed buildings & addons
-    if (m_bot.Data(item.type).isBuilding)
-    {
-        // send the building task to the building manager
-        m_buildingManager.addBuildingTask(item.type.getUnitTypeID(), m_bot.GetStartLocation());
+    // TODO: deal with morphed buildings & addons //grab from updated COMMAND_CENTER_BOT
+    if (m_bot.Data(item.type).isBuilding) // if we're dealing with a building
+    { 
+        m_buildingManager.addBuildingTask(item.type.getUnitTypeID(), m_bot.GetStartLocation()); // send the building task to the building manager
     }
-    // if we're dealing with a non-building unit
-    else if (item.type.isUnit())
+    else if (item.type.isUnit()) // if we're dealing with a non-building unit
     {
         Micro::SmartTrain(producer, item.type.getUnitTypeID(), m_bot);
     }
@@ -179,28 +170,18 @@ void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item
 
 bool ProductionManager::canMakeNow(const sc2::Unit * producer, const BuildType & type)
 {
-    if (!producer || !meetsReservedResources(type))
-    {
-        return false;
-    }
+    if (!producer || !meetsReservedResources(type)) { return false; }
 
     sc2::AvailableAbilities available_abilities = m_bot.Query()->GetAbilitiesForUnit(producer);
 
     // quick check if the unit can't do anything it certainly can't build the thing we want
-    if (available_abilities.abilities.empty())
-    {
-        return false;
-    }
+    if (available_abilities.abilities.empty()) { return false; }
     else
-    {
-        // check to see if one of the unit's available abilities matches the build ability type
+    { // check to see if one of the unit's available abilities matches the build ability type
         sc2::AbilityID buildTypeAbility = m_bot.Data(type).buildAbility;
         for (const sc2::AvailableAbility & available_ability : available_abilities.abilities)
         {
-            if (available_ability.ability_id == buildTypeAbility)
-            {
-                return true;
-            }
+            if (available_ability.ability_id == buildTypeAbility) { return true; }
         }
     }
 
@@ -208,8 +189,7 @@ bool ProductionManager::canMakeNow(const sc2::Unit * producer, const BuildType &
 }
 
 bool ProductionManager::detectBuildOrderDeadlock()
-{
-    // TODO: detect build order deadlocks here
+{ // TODO: detect build order deadlocks here
     return false;
 }
 
@@ -232,19 +212,15 @@ bool ProductionManager::meetsReservedResources(const BuildType & type)
 
 void ProductionManager::drawProductionInformation()
 {
-    if (!m_bot.Config().DrawProductionInfo)
-    {
-        return;
-    }
+    if (!m_bot.Config().DrawProductionInfo) { return; }
 
-    std::stringstream ss;
-    ss << "Production Information\n\n";
+    std::stringstream ss; ss << "Production Information\n\n";
 
     for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
     {
         if (unit->build_progress < 1.0f)
         {
-            //ss << sc2::UnitTypeToName(unit.unit_type) << " " << unit.build_progress << "\n";
+            ss << sc2::UnitTypeToName(unit->unit_type) << " " << unit->build_progress << "\n";
         }
     }
 

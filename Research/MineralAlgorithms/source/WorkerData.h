@@ -6,6 +6,7 @@ class CCBot;
 namespace WorkerJobs
 {
     enum { Minerals, Gas, Build, Combat, Idle, Repair, Move, Scout, None, Num };
+	//STRING NAME[Num] { "Minerals", "Gas", "Build", "Combat", "Idle", "Repair", "Move", "Scout", "None", "Num" };
 }
 
 class WorkerData

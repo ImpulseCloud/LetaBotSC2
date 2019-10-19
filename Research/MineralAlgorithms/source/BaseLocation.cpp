@@ -27,7 +27,7 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const sc2:
     for (auto resource : resources)
     {
         if (Util::IsMineral(resource))
-        {
+        { //if (resource->display_type == 1) { //if Visible(1) to Player //not Snapshot(2) int i = 1; //just a place for a Breakpoint }
             m_minerals.push_back(resource);
             m_mineralPositions.push_back(resource->pos);
 
@@ -62,12 +62,12 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const sc2:
 
     // compute this BaseLocation's DistanceMap, which will compute the ground distance
     // from the center of its recourses to every other tile on the map
-    m_distanceMap = m_bot.Map().getDistanceMap(m_centerOfResources);
+    m_distanceMap = m_bot.Map().getDistanceMap(m_centerOfResources); //THIS MAY BE VERY EXPENSIVE TO DO AT THE VERY START
 
     // check to see if this is a start location for the map
     for (auto & pos : m_bot.Observation()->GetGameInfo().enemy_start_locations)
     {
-        if (containsPosition(pos))
+        if (containsPosition(pos)) //if within 20 tiles of a start location
         {
             m_isStartLocation = true;
             m_depotPosition = pos;

@@ -44,6 +44,8 @@ void CCBot::OnGameStart()
 	m_baseMan.onStart(  m_bases.getPlayerStartingBaseLocation(Players::Self )  ) ;
 
     m_gameCommander.onStart();
+
+	OnStep();
 }
 
 void CCBot::OnStep()
@@ -56,7 +58,7 @@ void CCBot::OnStep()
     //m_workers.onFrame();
     m_strategy.onFrame();
 
-	m_baseMan.onframe();
+	m_baseMan.onFrame();
 
     m_gameCommander.onFrame();
 

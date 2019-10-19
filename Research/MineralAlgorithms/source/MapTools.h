@@ -14,6 +14,7 @@ class MapTools
     int     m_height;
     float   m_maxZ;
     int     m_frame;
+	std::string mapName;
     
 
     // a cache of already computed distance maps, which is mutable since it only acts as a cache

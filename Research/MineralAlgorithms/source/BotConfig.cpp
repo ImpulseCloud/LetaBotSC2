@@ -18,8 +18,8 @@ BotConfig::BotConfig()
     FoundEnemySpecificStrategy          = false;
     UsingAutoObserver                   = false;
 
-    DrawGameInfo                        = true;
-    DrawProductionInfo                  = true;
+    DrawGameInfo                        = false;
+    DrawProductionInfo                  = false;
     DrawTileInfo                        = false;
     DrawWalkableSectors                 = false;
     DrawScoutInfo                       = false;
@@ -34,7 +34,7 @@ BotConfig::BotConfig()
     DrawSquadInfo                       = false;
 
     KiteWithRangedUnits                 = true;
-    ScoutHarassEnemy                    = true;
+    ScoutHarassEnemy                    = false;
     CombatUnitsForAttack                = 12;
 
     ColorLineTarget                     = sc2::Colors::White;
@@ -84,6 +84,16 @@ void BotConfig::readConfigFile()
         JSONTools::ReadString("Authors", info, Authors);
         JSONTools::ReadBool("PrintInfoOnStart", info, PrintInfoOnStart);
     }
+
+	if (doc.HasMember("Game Info") && doc["Game Info"].IsObject())
+	{
+		const rapidjson::Value & info = doc["Game Info"];
+		JSONTools::ReadString("BotRace", info, BotRace);
+		JSONTools::ReadString("EnemyRace", info, EnemyRace);
+		JSONTools::ReadString("MapFile", info, MapName);
+		JSONTools::ReadInt("StepSize", info, StepSize);
+		JSONTools::ReadInt("EnemyDifficulty", info, EnemyDifficulty);
+	}
 
     // Parse the Micro Options
     if (doc.HasMember("Micro") && doc["Micro"].IsObject())
@@ -135,26 +145,10 @@ void BotConfig::readConfigFile()
 
 sc2::Race BotConfig::GetRace(const std::string & raceName)
 {
-    if (raceName == "Protoss")
-    {
-        return sc2::Race::Protoss;
-    }
-
-    if (raceName == "Terran")
-    {
-        return sc2::Race::Terran;
-    }
-
-    if (raceName == "Zerg")
-    {
-        return sc2::Race::Zerg;
-    }
-
-    if (raceName == "Random")
-    {
-        return sc2::Race::Random;
-    }
-
+    if (raceName == "Protoss") { return sc2::Race::Protoss; }
+    if (raceName == "Terran")  { return sc2::Race::Terran; }
+    if (raceName == "Zerg")    { return sc2::Race::Zerg; }
+    if (raceName == "Random")  { return sc2::Race::Random; }
     BOT_ASSERT(false, "Race not found: %s", raceName.c_str());
     return sc2::Race::Random;
 }

@@ -47,49 +47,29 @@ void BuildOrderQueue::skipItem()
     m_numSkippedItems++;
 }
 
+//i assume this means have enough money to build the next item before the next-in-line is 'started' (building structure with placed-schematic, but not placed-physically) ???
 bool BuildOrderQueue::canSkipItem()
-{
-    // does the queue have more elements
+{ // does the queue have more elements
     bool bigEnough = m_queue.size() > (size_t)(1 + m_numSkippedItems);
 
-    if (!bigEnough)
-    {
-        return false;
-    }
+    if (!bigEnough) { return false; }
 
     // is the current highest priority item not blocking a skip
     bool highestNotBlocking = !m_queue[m_queue.size() - 1 - m_numSkippedItems].blocking;
 
-    // this tells us if we can skip
-    return highestNotBlocking;
+    return highestNotBlocking; // this tells us if we can skip
 }
 
 void BuildOrderQueue::queueItem(const BuildOrderItem & b)
 {
-    // if the queue is empty, set the highest and lowest priorities
-    if (m_queue.empty())
-    {
-        m_highestPriority = b.priority;
-        m_lowestPriority = b.priority;
-    }
+    if (m_queue.empty()) { m_highestPriority = b.priority; m_lowestPriority = b.priority; } // if the queue is empty, set the highest and lowest priorities
 
-    // push the item into the queue
-    if (b.priority <= m_lowestPriority)
-    {
-        m_queue.push_front(b);
-    }
-    else
-    {
-        m_queue.push_back(b);
-    }
+    if (b.priority <= m_lowestPriority) { m_queue.push_front(b); } else { m_queue.push_back(b); } // push the item into the queue 
 
     // if the item is somewhere in the middle, we have to sort again
-    if ((m_queue.size() > 1) && (b.priority < m_highestPriority) && (b.priority > m_lowestPriority))
-    {
-        // sort the list in ascending order, putting highest priority at the top
-        std::sort(m_queue.begin(), m_queue.end());
-    }
-
+    if ((m_queue.size() > 1)  &&  (b.priority < m_highestPriority)  &&  (b.priority > m_lowestPriority))
+    {  std::sort(m_queue.begin(), m_queue.end());  } // sort the list in ascending order, putting highest priority at the top
+    
     // update the highest or lowest if it is beaten
     m_highestPriority = (b.priority > m_highestPriority) ? b.priority : m_highestPriority;
     m_lowestPriority  = (b.priority < m_lowestPriority)  ? b.priority : m_lowestPriority;
@@ -97,27 +77,20 @@ void BuildOrderQueue::queueItem(const BuildOrderItem & b)
 
 void BuildOrderQueue::queueAsHighestPriority(const BuildType & type, bool blocking)
 {
-    // the new priority will be higher
-    int newPriority = m_highestPriority + m_defaultPrioritySpacing;
-
-    // queue the item
-    queueItem(BuildOrderItem(type, newPriority, blocking));
+    int newPriority = m_highestPriority + m_defaultPrioritySpacing; // the new priority will be higher
+    queueItem(BuildOrderItem(type, newPriority, blocking)); // queue the item
 }
 
 void BuildOrderQueue::queueAsLowestPriority(const BuildType & type, bool blocking)
 {
-    // the new priority will be higher
-    int newPriority = m_lowestPriority - m_defaultPrioritySpacing;
-
-    // queue the item
-    queueItem(BuildOrderItem(type, newPriority, blocking));
+    int newPriority = m_lowestPriority - m_defaultPrioritySpacing; // the new priority will be lower
+    queueItem(BuildOrderItem(type, newPriority, blocking)); // queue the item
 }
 
 void BuildOrderQueue::removeHighestPriorityItem()
 {
-    // remove the back element of the vector
-    m_queue.pop_back();
-
+    m_queue.pop_back(); // remove the back element of the vector
+	
     // if the list is not empty, set the highest accordingly
     m_highestPriority = m_queue.empty() ? 0 : m_queue.back().priority;
     m_lowestPriority  = m_queue.empty() ? 0 : m_lowestPriority;

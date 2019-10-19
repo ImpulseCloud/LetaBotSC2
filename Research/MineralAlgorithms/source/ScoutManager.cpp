@@ -27,10 +27,7 @@ void ScoutManager::onFrame()
 void ScoutManager::setWorkerScout(const sc2::Unit * tag)
 {
     // if we have a previous worker scout, release it back to the worker manager
-    if (m_scoutUnit)
-    {
-        m_bot.Workers().finishedWithWorker(m_scoutUnit);
-    }
+    if (m_scoutUnit) { m_bot.Workers().finishedWithWorker(m_scoutUnit); }
 
     m_scoutUnit = tag;
     m_bot.Workers().setScoutWorker(m_scoutUnit);
@@ -56,37 +53,27 @@ void ScoutManager::moveScouts()
 
     float scoutHP = workerScout->health + workerScout->shield;
 
-    // get the enemy base location, if we have one
-    const BaseLocation * enemyBaseLocation = m_bot.Bases().getPlayerStartingBaseLocation(Players::Enemy);
+    const BaseLocation * enemyBaseLocation = m_bot.Bases().getPlayerStartingBaseLocation(Players::Enemy); // get the enemy base location, if we have one
 
     int scoutDistanceThreshold = 20;
 
-    // if we know where the enemy region is and where our scout is
-    if (enemyBaseLocation)
+    if (enemyBaseLocation) // if we know where the enemy region is and where our scout is
     {
         int scoutDistanceToEnemy = m_bot.Map().getGroundDistance(workerScout->pos, enemyBaseLocation->getPosition());
         bool scoutInRangeOfenemy = enemyBaseLocation->containsPosition(workerScout->pos);
 
         // we only care if the scout is under attack within the enemy region
         // this ignores if their scout worker attacks it on the way to their base
-        if (scoutHP < m_previousScoutHP)
-        {
-            m_scoutUnderAttack = true;
-        }
+        if (scoutHP < m_previousScoutHP) { m_scoutUnderAttack = true; }
 
         if (scoutHP == m_previousScoutHP && !enemyWorkerInRadiusOf(workerScout->pos))
-        {
-            m_scoutUnderAttack = false;
-        }
+        { m_scoutUnderAttack = false; }
 
-        // if the scout is in the enemy region
-        if (scoutInRangeOfenemy)
+        if (scoutInRangeOfenemy) // if the scout is in the enemy region
         {
-            // get the closest enemy worker
-            const sc2::Unit * closestEnemyWorkerUnit = closestEnemyWorkerTo(workerScout->pos);
+            const sc2::Unit * closestEnemyWorkerUnit = closestEnemyWorkerTo(workerScout->pos); // get the closest enemy worker
 
-            // if the worker scout is not under attack
-            if (!m_scoutUnderAttack)
+            if (!m_scoutUnderAttack) // if the worker scout is not under attack
             {
                 // if there is a worker nearby, harass it
                 if (m_bot.Config().ScoutHarassEnemy && closestEnemyWorkerUnit && (Util::Dist(workerScout->pos, closestEnemyWorkerUnit->pos) < 12))
@@ -94,22 +81,19 @@ void ScoutManager::moveScouts()
                     m_scoutStatus = "Harass enemy worker";
                     Micro::SmartAttackUnit(m_scoutUnit, closestEnemyWorkerUnit, m_bot);
                 }
-                // otherwise keep moving to the enemy base location
-                else
+                else // otherwise keep moving to the enemy base location
                 {
                     m_scoutStatus = "Moving to enemy base location";
                     Micro::SmartMove(m_scoutUnit, enemyBaseLocation->getPosition(), m_bot);
                 }
             }
-            // if the worker scout is under attack
-            else
+            else // if the worker scout is under attack
             {
                 m_scoutStatus = "Under attack inside, fleeing";
                 Micro::SmartMove(m_scoutUnit, getFleePosition(), m_bot);
             }
         }
-        // if the scout is not in the enemy region
-        else if (m_scoutUnderAttack)
+        else if (m_scoutUnderAttack) // if the scout is not in the enemy region
         {
             m_scoutStatus = "Under attack outside, fleeing";
 
@@ -119,8 +103,7 @@ void ScoutManager::moveScouts()
         {
             m_scoutStatus = "Enemy region known, going there";
 
-            // move to the enemy region
-            Micro::SmartMove(m_scoutUnit, enemyBaseLocation->getPosition(), m_bot);
+            Micro::SmartMove(m_scoutUnit, enemyBaseLocation->getPosition(), m_bot); // move to the enemy region
         }
 
     }

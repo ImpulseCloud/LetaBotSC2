@@ -17,19 +17,20 @@ void GameCommander::onStart()
     m_productionManager.onStart();
     m_scoutManager.onStart();
     m_combatCommander.onStart();
+
+	drawDebugInterface();
 }
 
 void GameCommander::onFrame()
 {
     m_timer.start();
 
-    handleUnitAssignments();
+    handleUnitAssignments(); //valid units, combat units, scout units
 
     m_productionManager.onFrame();
     m_scoutManager.onFrame();
     m_combatCommander.onFrame(m_combatUnits);
 
-    drawDebugInterface();
 }
 
 void GameCommander::drawDebugInterface()
@@ -40,10 +41,11 @@ void GameCommander::drawDebugInterface()
 void GameCommander::drawGameInformation(int x, int y)
 {
     std::stringstream ss;
-    ss << "Players: " << "\n";
+    ss << "Players: " << m_bot.Config().BotName << ":" << m_bot.Config().BotRace << " VS " << m_bot.Config().EnemyRace << ":" << m_bot.Config().EnemyDifficulty << "\n";
     ss << "Strategy: " << m_bot.Config().StrategyName << "\n";
-    ss << "Map Name: " << "\n";
-    ss << "Time: " << "\n";
+    ss << "Map Name: " << m_bot.Config().MapName << "\n";
+    //ss << "Time: " << "\n"; //use Calendar Date+Time here??
+	std::cout << ss.str() << std::endl;
 }
 
 // assigns units to various managers
@@ -79,12 +81,12 @@ void GameCommander::setValidUnits()
 void GameCommander::setScoutUnits()
 {
     // if we haven't set a scout unit, do it
-    if (m_scoutUnits.empty() && !m_initialScoutSet)
+    if (m_scoutUnits.empty() && !m_initialScoutSet && m_bot.Config().ScoutHarassEnemy) //only send a scout if ScoutHarrassEnemy is TRUE
     {
         // if it exists
-        if (shouldSendInitialScout())
+        if (shouldSendInitialScout()) //if we've built our first race-specific building already (or it is in-progress?)
         {
-            // grab the closest worker to the supply provider to send to scout
+            // grab the closest worker to the supply provider to send to scout //<-- this gets closest to TownHall, not supply depot
             const sc2::Unit * workerScout = m_bot.Workers().getClosestMineralWorkerTo(m_bot.GetStartLocation());
 
             // if we find a worker (which we should) add it to the scout units
@@ -94,10 +96,7 @@ void GameCommander::setScoutUnits()
                 assignUnit(workerScout, m_scoutUnits);
                 m_initialScoutSet = true;
             }
-            else
-            {
-                
-            }
+            else { }
         }
     }
 }

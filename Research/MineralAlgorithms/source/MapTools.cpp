@@ -60,6 +60,8 @@ void MapTools::onFrame()
 {
     m_frame++;
 
+	std::cout << "Frame: " << m_frame << std::endl;
+
     for (int x=0; x<m_width; ++x)
     {
         for (int y=0; y<m_height; ++y)

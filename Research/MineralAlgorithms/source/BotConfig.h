@@ -19,6 +19,13 @@ public:
     std::string Authors;
     bool PrintInfoOnStart;
     std::string BotMode;
+
+	//all of the 'Game Info' module
+	std::string BotRace;
+	std::string EnemyRace;
+	std::string MapName;
+	int StepSize;
+	int EnemyDifficulty;
     
     std::string StrategyName;
     std::string ReadDir;

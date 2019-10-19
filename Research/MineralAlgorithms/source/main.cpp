@@ -139,8 +139,8 @@ int main(int argc, char* argv[])
     while (true) 
     {
         coordinator.Update();
-		//coordinator.WaitForAllResponses();
-		//sc2::PollKeyPress();
+		coordinator.WaitForAllResponses();
+		sc2::PollKeyPress();
     }
 
     return 0;

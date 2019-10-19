@@ -12,14 +12,14 @@ UnitInfoManager::UnitInfoManager(CCBot & bot)
 
 void UnitInfoManager::onStart()
 {
-
+	updateUnitInfo();
 }
 
 void UnitInfoManager::onFrame()
 {
     updateUnitInfo();
-    drawUnitInformation(100, 100);
-    drawSelectedUnitDebugInfo();
+    drawUnitInformation(100, 100); //not sure what this does
+    //drawSelectedUnitDebugInfo(); //draws UNIT_ABILITIES on the cursor-selected unit
 }
 
 void UnitInfoManager::updateUnitInfo()
@@ -194,6 +194,7 @@ size_t UnitInfoManager::getUnitTypeCount(int player, sc2::UnitTypeID type, bool 
     return count;
 }
 
+//not sure what this does
 void UnitInfoManager::drawUnitInformation(float x,float y) const
 {
     if (!m_bot.Config().DrawEnemyUnitInfo)

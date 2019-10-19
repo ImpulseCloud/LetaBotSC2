@@ -24,7 +24,7 @@ void BuildingManager::onFrame()
 {
     for (auto unit : m_bot.UnitInfo().getUnits(Players::Self))
     {
-        // filter out units which aren't buildings under construction
+        // filter out units which aren't buildings-under-construction
         if (m_bot.Data(unit->unit_type).isBuilding)
         {
             std::stringstream ss;
@@ -233,13 +233,9 @@ void BuildingManager::checkForStartedConstruction()
         }
 
         // check all our building status objects to see if we have a match and if we do, update it
-
         for (auto & b : m_buildings)
         {
-            if (b.status != BuildingStatus::Assigned)
-            {
-                continue;
-            }
+            if (b.status != BuildingStatus::Assigned) { continue; }
 
             // check if the positions match
             float dx = b.finalPosition.x - buildingStarted->pos.x;
@@ -247,10 +243,7 @@ void BuildingManager::checkForStartedConstruction()
 
             if (dx*dx + dy*dy < 1)
             {
-                if (b.buildingUnit != nullptr)
-                {
-                    std::cout << "Building mis-match somehow\n";
-                }
+                if (b.buildingUnit != nullptr)  { std::cout << "Building mis-match somehow\n"; }
 
                 // the resources should now be spent, so unreserve them
                 m_reservedMinerals -= Util::GetUnitTypeMineralPrice(buildingStarted->unit_type, m_bot);
@@ -262,9 +255,7 @@ void BuildingManager::checkForStartedConstruction()
 
                 // if we are zerg, the buildingUnit now becomes nullptr since it's destroyed
                 if (m_bot.GetPlayerRace(Players::Self) == sc2::Race::Zerg)
-                {
-                    b.builderUnit = nullptr;
-                }
+                { b.builderUnit = nullptr; }
                 else if (m_bot.GetPlayerRace(Players::Self) == sc2::Race::Protoss)
                 {
                     m_bot.Workers().finishedWithWorker(b.builderUnit);
@@ -306,7 +297,7 @@ void BuildingManager::checkForCompletedBuildings()
             // if we are terran, give the worker back to worker manager
             if (m_bot.GetPlayerRace(Players::Self) == sc2::Race::Terran)
             {
-                //m_bot.Workers().finishedWithWorker(b.builderUnit);
+                m_bot.Workers().finishedWithWorker(b.builderUnit);
 				m_bot.m_baseMan.OnUnitCreated(b.builderUnit);
             }
 

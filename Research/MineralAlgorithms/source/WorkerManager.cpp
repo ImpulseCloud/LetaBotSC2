@@ -64,24 +64,69 @@ void WorkerManager::handleGasWorkers()
     }
 }
 
+/*
+// We should pair workers on CloseMinerals before FarMinerals
+void WorkerManager::handleDepotDesires()
+{
+	// for each unit we have
+	for (auto unit : m_bot.UnitInfo().getUnits(Players::Self))
+	{
+		// if that unit is a refinery
+		if (Util::IsRefinery(unit) && Util::IsCompleted(unit))
+		{
+			// get the number of workers currently assigned to it
+			int numAssigned = m_workerData.getNumAssignedWorkers(unit);
+
+			// if it's less than we want it to be, fill 'er up
+			for (int i = 0; i<(3 - numAssigned); ++i)
+			{
+				auto gasWorker = getGasWorker(unit);
+				getClosestBestWorkerTo(refinery->pos);
+				if (gasWorker)
+				{
+					m_workerData.setWorkerJob(gasWorker, WorkerJobs::Gas, unit);
+				}
+			}
+		}
+	}
+}
+const sc2::Unit * WorkerManager::getClosestBestWorkerTo(const sc2::Point2D & pos) const
+{
+	const sc2::Unit * closestMineralWorker = nullptr;
+	double closestDist = std::numeric_limits<double>::max();
+
+	// for each of our workers
+	for (auto worker : m_workerData.getWorkers())
+	{
+		if (!worker) { continue; }
+
+		// if it is a mineral worker
+		if (m_workerData.getWorkerJob(worker) == WorkerJobs::Minerals)
+		{
+			double dist = Util::DistSq(worker->pos, pos);
+
+			if (!closestMineralWorker || dist < closestDist)
+			{
+				closestMineralWorker = worker;
+				dist = closestDist;
+			}
+		}
+	}
+
+	return closestMineralWorker;
+}
+*/
+
 void WorkerManager::handleIdleWorkers()
 {
     // for each of our workers
     for (auto worker : m_workerData.getWorkers())
     {
         if (!worker) { continue; }
+        if (m_workerData.getWorkerJob(worker) == WorkerJobs::Scout) { continue; } // if it's a scout, don't handle it here
 
-        // if it's a scout, don't handle it here
-        if (m_workerData.getWorkerJob(worker) == WorkerJobs::Scout)
-        {
-            continue;
-        }
-
-        // if it is idle
-        if (Util::IsIdle(worker) || m_workerData.getWorkerJob(worker) == WorkerJobs::Idle)
-        {
-            setMineralWorker(worker);
-        }
+        if (Util::IsIdle(worker) || m_workerData.getWorkerJob(worker) == WorkerJobs::Idle) // if it is idle
+        { setMineralWorker(worker); }
     }
 }
 
@@ -131,6 +176,7 @@ void WorkerManager::setMineralWorker(const sc2::Unit * unit)
     }
 }
 
+//This is to find the nearest base to drop off resources at ('depot' to put resources in)
 const sc2::Unit * WorkerManager::getClosestDepot(const sc2::Unit * worker) const
 {
     const sc2::Unit * closestDepot = nullptr;
@@ -160,7 +206,7 @@ void WorkerManager::finishedWithWorker(const sc2::Unit * unit)
 {
     if (m_workerData.getWorkerJob(unit) != WorkerJobs::Scout)
     {
-        m_workerData.setWorkerJob(unit, WorkerJobs::Idle);
+        m_workerData.setWorkerJob(unit, WorkerJobs::Minerals);
     }
 }
 
@@ -179,21 +225,12 @@ void WorkerManager::setBuildingWorker(const sc2::Unit * worker, Building & b)
 // set 'setJobAsBuilder' to false if we just want to see which worker will build a building
 const sc2::Unit * WorkerManager::getBuilder(Building & b, bool setJobAsBuilder) const
 {
-
-
-	
     const sc2::Unit * builderWorker = getClosestMineralWorkerTo(b.finalPosition);
 
     // if the worker exists (one may not have been found in rare cases)
-    if (builderWorker && setJobAsBuilder)
-    {
-        m_workerData.setWorkerJob(builderWorker, WorkerJobs::Build, b.builderUnit);
-    }
+    if (builderWorker && setJobAsBuilder) { m_workerData.setWorkerJob(builderWorker, WorkerJobs::Build, b.builderUnit); }
 
     return builderWorker;
-	
-
-
 }
 
 // sets a worker as a scout

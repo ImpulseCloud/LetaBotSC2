@@ -9,9 +9,7 @@ WorkerData::WorkerData(CCBot & bot)
     : m_bot(bot)
 {
     for (int i=0; i < WorkerJobs::Num; ++i)
-    {
-        m_workerJobCount[i] = 0;
-    }
+	{ m_workerJobCount[i] = 0; }
 }
 
 void WorkerData::updateAllWorkerData()
@@ -83,45 +81,27 @@ void WorkerData::setWorkerJob(const sc2::Unit * unit, int job, const sc2::Unit *
             m_depotWorkerCount[jobUnit] = 0;
         }
 
-        // add the depot to our set of depots
-        m_depots.insert(jobUnit);
+        m_depots.insert(jobUnit); // add the depot to our set of depots
 
-        // increase the worker count of this depot
-        m_workerDepotMap[unit] = jobUnit;
+        m_workerDepotMap[unit] = jobUnit; // increase the worker count of this depot
         m_depotWorkerCount[jobUnit]++;
 
-        // find the mineral to mine and mine it
-        const sc2::Unit * mineralToMine = getMineralToMine(unit);
+        const sc2::Unit * mineralToMine = getMineralToMine(unit); // find the mineral to mine and mine it
         
         Micro::SmartRightClick(unit, mineralToMine, m_bot);
     }
     else if (job == WorkerJobs::Gas)
     {
-        // if we haven't assigned any workers to this refinery yet set count to 0
-        if (m_refineryWorkerCount.find(jobUnit) == m_refineryWorkerCount.end())
-        {
-            m_refineryWorkerCount[jobUnit] = 0;
-        }
-
-        // increase the count of workers assigned to this refinery
-        m_refineryWorkerCount[jobUnit] += 1;
+        if (m_refineryWorkerCount.find(jobUnit) == m_refineryWorkerCount.end()) { m_refineryWorkerCount[jobUnit] = 0; } // if we haven't assigned any workers to this refinery yet set count to 0
+        
+        m_refineryWorkerCount[jobUnit] += 1; // increase the count of workers assigned to this refinery
         m_workerRefineryMap[unit] = jobUnit;
 
-        // right click the refinery to start harvesting
-        Micro::SmartRightClick(unit, jobUnit, m_bot);
+        Micro::SmartRightClick(unit, jobUnit, m_bot); // right click the refinery to start harvesting
     }
-    else if (job == WorkerJobs::Repair)
-    {
-        Micro::SmartRepair(unit, jobUnit, m_bot);
-    }
-    else if (job == WorkerJobs::Scout)
-    {
-
-    }
-    else if (job == WorkerJobs::Build)
-    {
-
-    }
+    else if (job == WorkerJobs::Repair) {  Micro::SmartRepair(unit, jobUnit, m_bot); }
+    else if (job == WorkerJobs::Scout) { }
+    else if (job == WorkerJobs::Build) { }
 }
 
 void WorkerData::clearPreviousJob(const sc2::Unit * unit)

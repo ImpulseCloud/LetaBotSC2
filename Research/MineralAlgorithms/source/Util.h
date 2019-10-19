@@ -7,6 +7,13 @@ class CCBot;
 
 namespace Util
 {
+	static std::ofstream file;
+	static std::string mapName;
+	static const sc2::GameInfo * gameInfo;
+	static std::vector<std::vector<bool>> m_pathable;
+	static std::vector<std::vector<bool>> m_placement;
+	static std::vector<std::vector<float>> m_terrainHeight;
+
     struct IsUnit 
     {
         sc2::UNIT_TYPEID m_type;

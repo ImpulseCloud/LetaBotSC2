@@ -25,10 +25,7 @@ void BaseLocationManager::onStart()
     {
         // skip minerals that don't have more than 100 starting minerals
         // these are probably stupid map-blocking minerals to confuse us
-        if (!Util::IsMineral(mineral))
-        {
-            continue;
-        }
+        if (!Util::IsMineral(mineral)) { continue; }
 
         bool foundCluster = false;
         for (auto & cluster : resourceClusters)
@@ -142,7 +139,7 @@ void BaseLocationManager::onFrame()
     for (auto & baseLocation : m_baseLocationData)
     {
         baseLocation.setPlayerOccupying(Players::Self, false);
-        baseLocation.setPlayerOccupying(Players::Self, false);
+        baseLocation.setPlayerOccupying(Players::Enemy, false); //TODO: why is this called twice???
     }
 
     // for each unit on the map, update which base location it may be occupying
@@ -307,7 +304,7 @@ sc2::Point2D BaseLocationManager::getNextExpansion(int player) const
 {
     const BaseLocation * homeBase = getPlayerStartingBaseLocation(player);
     const BaseLocation * closestBase = nullptr;
-    int minDistance = std::numeric_limits<int>::max();
+	int minDistance = INT_MAX; //std::numeric_limits<int>::max();
 
     sc2::Point2D homeTile = homeBase->getPosition();
     
